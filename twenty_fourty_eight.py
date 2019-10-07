@@ -23,7 +23,10 @@ def detect_up_collision(board, row, column):
     for i in range(1, rows + 1):
         if row - i >= 0:
             if board[row - i][column] != -1:
-                new_row = row - i + 1
+                if board[row - i][column] != board[row][column]:
+                    new_row = row - i + 1
+                else:
+                    new_row = row - i
                 break
         else:
             new_row = 0
@@ -36,8 +39,10 @@ def detect_down_collision(board, row, column):
     new_row = row
     for i in range(1, rows + 1):
         if row + i <= 3:
-            if board[row + i][column] != -1:
+            if board[row + i][column] != board[row][column]:
                 new_row = row + i - 1
+            else:
+                new_row = row + i
                 break
         else:
             new_row = 3
@@ -50,8 +55,10 @@ def detect_right_collision(board, row, column):
     new_column = column
     for i in range(1, columns + 1):
         if column + i <= 3:
-            if board[row][column + i] != -1:
+            if board[row][column + i] != board[row][column]:
                 new_column = column + i - 1
+            else:
+                new_column = column + i
                 break
         else:
             new_column = 3
@@ -64,8 +71,10 @@ def detect_left_collision(board, row, column):
     new_column = column
     for i in range(1, columns + 1):
         if column - i >= 0:
-            if board[row][column - i] != -1:
+            if board[row][column - i] != board[row][column]:
                 new_column = column - i + 1
+            else:
+                new_column = column - i
                 break
         else:
             new_column = 0
@@ -75,8 +84,12 @@ def detect_left_collision(board, row, column):
 
 def swap_positions(board, row, column, new_row, new_column):
     if row != new_row or column != new_column:
-        board[new_row][new_column] = board[row][column]
-        board[row][column] = -1
+        if board[row][column] == board[new_row][new_column]:
+            board[new_row][new_column] = board[row][column]*2
+            board[row][column] = -1
+        else:
+            board[new_row][new_column] = board[row][column]
+            board[row][column] = -1
 
 
 def move_tile(board, row, column, direction):
@@ -102,6 +115,9 @@ def move_tile(board, row, column, direction):
 def main():
     board_state[0][3] = 2
     board_state[3][3] = 2
+    board_state[1][1] = 4
+    board_state[2][2] = 16
+    board_state[2][1] = 8
 
     while True:
         print_board(board_state)
