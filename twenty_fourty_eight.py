@@ -1,3 +1,5 @@
+import random
+
 rows = 4
 columns = 4
 board_state = [[-1 for i in range(columns)] for j in range(rows)]
@@ -112,12 +114,50 @@ def move_tile(board, row, column, direction):
 
     return 1
 
+
+def is_tile_occupied(board, row, column):
+    if board[row][column] == -1:
+        return False
+    else:
+        return True
+
+
+def insert_tile(board):
+    while True:
+        row = random.randint(0, 3)
+        column = random.randint(0, 3)
+
+        if not is_tile_occupied(board, row, column):
+            break
+
+    if random.random() < 0.9:
+        board[row][column] = 2
+    else:
+        board[row][column] = 4
+
+# create a new game
+def new_game(board):
+    for i in range(rows):
+        for j in range(columns):
+            board[i][j] = -1
+
+    for i in range(2):
+
+        while True:
+            row = random.randint(0, 3)
+            column = random.randint(0, 3)
+
+            if not is_tile_occupied(board, row, column):
+                break
+
+        if random.random() < 0.9:
+            board[row][column] = 2
+        else:
+            board[row][column] = 4
+
+
 def main():
-    board_state[0][3] = 2
-    board_state[3][3] = 2
-    board_state[1][1] = 4
-    board_state[2][2] = 16
-    board_state[2][1] = 8
+    new_game(board_state)
 
     while True:
         print_board(board_state)
@@ -125,6 +165,7 @@ def main():
         column = int(input('column '))
         direction = input('direction ')
         move_tile(board_state, row, column, direction)
+        insert_tile(board_state)
 
 
 if __name__ == '__main__':
