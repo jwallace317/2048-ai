@@ -60,6 +60,7 @@ class Board:
         else:
             return True
 
+    # detects the first up collision given the position of a tile and determines how to respond to that collision
     def detect_up_collision(self, row, column):
         new_row = 0
         for i in range(1, self.rows):
@@ -75,6 +76,7 @@ class Board:
 
         return new_row
 
+    # detects the first down collision given the position of a tile and determines how to respond to that collision
     def detect_down_collision(self, row, column):
         new_row = 3
         for i in range(1, self.rows):
@@ -90,6 +92,7 @@ class Board:
 
         return new_row
 
+    # detects the first left collision given the position of a tile and determines how to respond to that collision
     def detect_left_collision(self, row, column):
         new_column = 0
         for i in range(1, self.columns):
@@ -105,6 +108,7 @@ class Board:
 
         return new_column
 
+    # detects the first right collision given the position of a tile and determines how to respond to that collision
     def detect_right_collision(self, row, column):
         new_column = 3
         for i in range(1, self.columns):
@@ -120,6 +124,7 @@ class Board:
 
         return new_column
 
+    # moves a tile in a given direction with the correct collision logic
     def move_tile(self, row, column, direction):
         if direction == 'up':
             new_row = self.detect_up_collision(row, column)
@@ -161,6 +166,7 @@ class Board:
                 self.board[row][new_column] = self.board[row][column]
                 self.board[row][column] = -1
 
+    # moves the tiles of the board in a given direction with the correct collision logic
     def move(self, direction):
         if direction == 'up':
             for row in range(self.rows):
