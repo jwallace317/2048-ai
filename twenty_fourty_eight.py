@@ -1,8 +1,9 @@
 import random
+from board import Board
 
 rows = 4
 columns = 4
-board_state = [[-1 for i in range(columns)] for j in range(rows)]
+board_state = [[-1 for column in range(columns)] for row in range(rows)]
 
 # prints the given board state to the screen
 def print_board(board):
@@ -86,31 +87,67 @@ def detect_left_collision(board, row, column):
 
 def swap_positions(board, row, column, new_row, new_column):
     if row != new_row or column != new_column:
-        if board[row][column] == board[new_row][new_column]:
-            board[new_row][new_column] = board[row][column]*2
-            board[row][column] = -1
-        else:
-            board[new_row][new_column] = board[row][column]
-            board[row][column] = -1
+        temp = board[new_row][new_column]
+        board[new_row][new_column] = board[row][column]
+        board[row][column] = temp
+    else:
+        board[new_row][new_column] = board[row][column]*2
+        board[row][column] = -1
+
+# def move(board, direction):
+#     # if direction is up
+#     if direction == 'up':
+#         for i in range(rows):
+#             for j in range(columns):
+#                 move_tile(board, i, j, direction)
+#     elif direction == 'down':
+#         for i in [3, 2, 1, 0]:
+#             for j in [3, 2, 1, 0]:
+#                 move_tile(board, i, j, direction)
+#     elif direction == 'left':
+#         for i in [3, 2, 1, 0]:
+#             for j in [3, 2, 1, 0]:
+#                 move_tile(board, j, i, direction)
+#     elif direction == 'right':
+#         for i in range(columns):
+#             for j in range(rows):
+#                 move_tile(board, j, i, direction)
+
+def move(board, direction):
+    if direction == 'up':
+        for i in range(0, 4):
+            for j in range(0, 4):
+                if board[i][j] != -1:
+                    print(i)
+                    print(j)
+                    new_row, new_column = detect_up_collision(board, i, j)
+                    swap_positions(board, i, j, new_row, new_column)
+    elif direction == 'down':
+        return 1
+    elif direction == 'left':
+        return 1
+    elif direction == 'right':
+        return 1
+    else:
+        return 1
 
 
 def move_tile(board, row, column, direction):
-    if direction == 'up':
-        new_row, new_column = detect_up_collision(board, row, column)
-        swap_positions(board, row, column, new_row, new_column)
-    elif direction == 'down':
-        new_row, new_column = detect_down_collision(board, row, column)
-        swap_positions(board, row, column, new_row, new_column)
-    elif direction == 'left':
-        new_row, new_column = detect_left_collision(board, row, column)
-        print(new_row)
-        print(new_column)
-        swap_positions(board, row, column, new_row, new_column)
-    elif direction == 'right':
-        new_row, new_column = detect_right_collision(board, row, column)
-        swap_positions(board, row, column, new_row, new_column)
-    else:
-        print('invalid direction given')
+    if board[row][column] != -1:
+        if direction == 'up':
+            new_row, new_column = detect_up_collision(board, row, column)
+            swap_positions(board, row, column, new_row, new_column)
+        elif direction == 'down':
+            new_row, new_column = detect_down_collision(board, row, column)
+            swap_positions(board, row, column, new_row, new_column)
+        elif direction == 'left':
+            new_row, new_column = detect_left_collision(board, row, column)
+            swap_positions(board, row, column, new_row, new_column)
+        elif direction == 'right':
+            new_row, new_column = detect_right_collision(board, row, column)
+            swap_positions(board, row, column, new_row, new_column)
+        else:
+            print('invalid direction given')
 
     return 1
 
@@ -159,13 +196,14 @@ def new_game(board):
 def main():
     new_game(board_state)
 
+    board = Board()
+    board.new_game()
     while True:
-        print_board(board_state)
-        row = int(input('row '))
-        column = int(input('column '))
-        direction = input('direction ')
-        move_tile(board_state, row, column, direction)
-        insert_tile(board_state)
+        board.print()
+        direction = input('direction: ')
+        board.move(direction)
+        board.insert_random_tile()
+
 
 
 if __name__ == '__main__':
