@@ -42,21 +42,73 @@ class AIAgent:
 
     def find_next_best_move(self):
         # start with an up move
-        board_copy_up = deepcopy(self.board)
+        up_score_sum = 0
+        for i in range(10):
+            board_copy_up = deepcopy(self.board)
+            board_copy_up.move('up')
+            while self.moves_left(board_copy_up):
+                direction = util.generate_random_move(board_copy_up)
+                board_copy_up.move(direction)
+                board_copy_up.insert_random_tile()
 
-        board_copy_up.move('up')
-        while self.moves_left(board_copy_up):
-            direction = util.generate_random_move()
-            board_copy_up.move(direction)
-            board_copy_up.insert_random_tile()
+            up_score_sum += self.evaluate_board(board_copy_up)
 
-        return self.evaluate_board(board_copy_up)
+        up_average = up_score_sum / 10
 
         # start with a down move
-        board_copy_down = deepcopy(self.board)
+        down_score_sum = 0
+        for i in range(10):
+            board_copy_down = deepcopy(self.board)
+            board_copy_down.move('down')
+            while self.moves_left(board_copy_down):
+                direction = util.generate_random_move(board_copy_down)
+                board_copy_down.move(direction)
+                board_copy_down.insert_random_tile()
+
+            down_score_sum += self.evaluate_board(board_copy_down)
+
+        down_average = down_score_sum / 10
 
         # start with a left move
-        board_copy_left = deepcopy(self.board)
+        left_score_sum = 0
+        for i in range(10):
+            board_copy_left = deepcopy(self.board)
+            board_copy_left.move('left')
+            while self.moves_left(board_copy_left):
+                direction = util.generate_random_move(board_copy_left)
+                board_copy_left.move(direction)
+                board_copy_left.insert_random_tile()
+
+            left_score_sum += self.evaluate_board(board_copy_left)
+
+        left_average = left_score_sum / 10
 
         # start with a right move
-        board_copy_right = deepcopy(self.board)
+        right_score_sum = 0
+        for i in range(10):
+            board_copy_right = deepcopy(self.board)
+            board_copy_right.move('right')
+            while self.moves_left(board_copy_right):
+                direction = util.generate_random_move(board_copy_right)
+                board_copy_right.move(direction)
+                board_copy_right.insert_random_tile()
+
+            right_score_sum += self.evaluate_board(board_copy_right)
+
+        right_average = right_score_sum / 10
+
+        print('up average: ' + str(up_average) + ' valid move: ' + str(util.valid_move(self.board, 'up')))
+        print('down average: ' + str(down_average) + ' valid move: ' + str(util.valid_move(self.board, 'down')))
+        print('left average: ' + str(left_average) + ' valid move: ' + str(util.valid_move(self.board, 'left')))
+        print('right average: ' + str(right_average) + ' valid move: ' + str(util.valid_move(self.board, 'right')))
+
+        max_average = max([up_average, down_average, left_average, right_average])
+
+        if max_average == up_average:
+            return 'up'
+        elif max_average == down_average:
+            return 'down'
+        elif max_average == left_average:
+            return 'left'
+        elif max_average == right_average:
+            return 'right'

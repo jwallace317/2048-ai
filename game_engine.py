@@ -1,19 +1,19 @@
 from board import Board
-from ai_agent import AIAgent
+from util import end_game
+from util import evaluate_score
 
-def main():
+
+def game():
     board = Board()
     board.new_game()
 
-    ai_agent = AIAgent(board)
-    while True:
+    while not end_game(board):
         board.print()
-        print('score: ' + str(ai_agent.evaluate_board(board)))
-        print(ai_agent.find_next_best_move())
+        print('score: ' + str(evaluate_score(board)))
         direction = input('direction: ')
         board.move(direction)
         board.insert_random_tile()
 
 
 if __name__ == '__main__':
-    main()
+    game()
