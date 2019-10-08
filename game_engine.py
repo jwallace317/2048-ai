@@ -9,6 +9,7 @@ def main():
     while True:
         board.print()
         print('score: ' + str(ai_agent.evaluate_board()))
+        print(ai_agent.moves_left())
         direction = input('direction: ')
         board.move(direction)
         board.insert_random_tile()

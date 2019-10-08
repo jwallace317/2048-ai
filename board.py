@@ -33,20 +33,30 @@ class Board:
             for column in range(self.columns):
                 self.board[row][column] = -1
 
+    # determines if the board is completely filled with tiles
+    def is_board_full(self):
+        for row in range(self.rows):
+            for column in range(self.columns):
+                if self.board[row][column] == -1:
+                    return False
+
+        return True
+
     # insert a random 2 tile or a 4 tile on any unoccupied tile of the boardS
     def insert_random_tile(self):
-        while True:
-            row = random.randint(0, self.rows - 1)
-            column = random.randint(0, self.columns - 1)
+        if not self.is_board_full():
+            while True:
+                row = random.randint(0, self.rows - 1)
+                column = random.randint(0, self.columns - 1)
 
-            if not self.is_tile_occupied(row, column):
-                break
+                if not self.is_tile_occupied(row, column):
+                    break
 
-        # 90% chance of inserting a 2 tile, 10% chance of inserting a 4 tile
-        if random.random() < 0.9:
-            self.board[row][column] = 2
-        else:
-            self.board[row][column] = 4
+            # 90% chance of inserting a 2 tile, 10% chance of inserting a 4 tile
+            if random.random() < 0.9:
+                self.board[row][column] = 2
+            else:
+                self.board[row][column] = 4
 
     # clears the board and inserts two random tiles
     def new_game(self):
