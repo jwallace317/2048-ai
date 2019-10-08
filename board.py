@@ -1,5 +1,6 @@
 # import necessary modules
 import random
+from collision_detector import CollisionDetector
 
 
 # Board class
@@ -10,6 +11,7 @@ class Board:
         self.rows = 4
         self.columns = 4
         self.board = [[-1 for column in range(self.columns)] for row in range(self.rows)]
+        self.collision_detector = CollisionDetector(self)
 
     # prints the board to the terminal
     def print(self):
@@ -60,74 +62,10 @@ class Board:
         else:
             return True
 
-    # detects the first up collision given the position of a tile and determines how to respond to that collision
-    def detect_up_collision(self, row, column):
-        new_row = 0
-        for i in range(1, self.rows):
-            if row - i >= 0:
-                if self.is_tile_occupied(row - i, column):
-                    if self.board[row - i][column] == self.board[row][column]:
-                        new_row = row - i
-                    else:
-                        new_row = row - i + 1
-                    break
-            else:
-                break
-
-        return new_row
-
-    # detects the first down collision given the position of a tile and determines how to respond to that collision
-    def detect_down_collision(self, row, column):
-        new_row = 3
-        for i in range(1, self.rows):
-            if row + i <= self.rows - 1:
-                if self.is_tile_occupied(row + i, column):
-                    if self.board[row + i][column] == self.board[row][column]:
-                        new_row = row + i
-                    else:
-                        new_row = row + i - 1
-                    break
-            else:
-                break
-
-        return new_row
-
-    # detects the first left collision given the position of a tile and determines how to respond to that collision
-    def detect_left_collision(self, row, column):
-        new_column = 0
-        for i in range(1, self.columns):
-            if column - i >= 0:
-                if self.is_tile_occupied(row, column - i):
-                    if self.board[row][column - i] == self.board[row][column]:
-                        new_column = column - i
-                    else:
-                        new_column = column - i + 1
-                    break
-            else:
-                break
-
-        return new_column
-
-    # detects the first right collision given the position of a tile and determines how to respond to that collision
-    def detect_right_collision(self, row, column):
-        new_column = 3
-        for i in range(1, self.columns):
-            if column + i <= self.columns - 1:
-                if self.is_tile_occupied(row, column + i):
-                    if self.board[row][column + i] == self.board[row][column]:
-                        new_column = column + i
-                    else:
-                        new_column = column + i - 1
-                    break
-            else:
-                break
-
-        return new_column
-
     # moves a tile in a given direction with the correct collision logic
     def move_tile(self, row, column, direction):
         if direction == 'up':
-            new_row = self.detect_up_collision(row, column)
+            new_row = self.collision_detector.detect_up_collision(row, column)
 
             if self.board[new_row][column] == self.board[row][column] and new_row != row:
                 self.board[new_row][column] = 2 * self.board[row][column]
@@ -137,7 +75,7 @@ class Board:
                 self.board[row][column] = -1
 
         if direction == 'down':
-            new_row = self.detect_down_collision(row, column)
+            new_row = self.collision_detector.detect_down_collision(row, column)
 
             if self.board[new_row][column] == self.board[row][column] and new_row != row:
                 self.board[new_row][column] = 2 * self.board[row][column]
@@ -147,7 +85,7 @@ class Board:
                 self.board[row][column] = -1
 
         if direction == 'left':
-            new_column = self.detect_left_collision(row, column)
+            new_column = self.collision_detector.detect_left_collision(row, column)
 
             if self.board[row][new_column] == self.board[row][column] and new_column != column:
                 self.board[row][new_column] = 2 * self.board[row][column]
@@ -157,7 +95,7 @@ class Board:
                 self.board[row][column] = -1
 
         if direction == 'right':
-            new_column = self.detect_right_collision(row, column)
+            new_column = self.collision_detector.detect_right_collision(row, column)
 
             if self.board[row][new_column] == self.board[row][column] and new_column != column:
                 self.board[row][new_column] = 2 * self.board[row][column]
