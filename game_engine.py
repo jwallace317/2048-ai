@@ -1,18 +1,20 @@
 from board import Board
-from util import end_game
-from util import evaluate_score
 
 
 def game():
     board = Board()
-    board.new_game()
+    board.clear()
 
-    while not end_game(board):
+    while len(board.valid_moves()) > 0:
         board.print()
-        print('score: ' + str(evaluate_score(board)))
+
         direction = input('direction: ')
-        board.move(direction)
-        board.insert_random_tile()
+
+        if board.valid_move(direction):
+            board.move(direction)
+            board.insert_random_tile()
+        else:
+            print('invalid move')
 
 
 if __name__ == '__main__':
