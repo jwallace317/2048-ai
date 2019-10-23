@@ -12,12 +12,7 @@ class Board:
         self.score = 0
         self.rows = 4
         self.columns = 4
-
         self.empty_tiles = []
-        for row in range(self.rows):
-            for column in range(self.columns):
-                self.empty_tiles.append((row, column))
-
         self.board = [[0 for column in range(self.columns)] for row in range(self.rows)]
         self.collision_detector = CollisionDetector(self)
 

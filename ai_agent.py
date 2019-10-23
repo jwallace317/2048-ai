@@ -48,7 +48,7 @@ class AIAgent:
                 board_clone.insert_tile(tile[0], tile[1], 4)
                 score += 0.1 * self.best_move(board_clone, depth - 1, True)
 
-            return score / (2*len(board.empty_tiles) + 1)
+            return score / (len(board.empty_tiles) + 1)
         # else the max depth has not been reached and it is the player's turn to place a tile
         elif is_player:
             score = 0
