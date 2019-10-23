@@ -7,12 +7,12 @@ from copy import deepcopy
 # Board class
 class Board:
 
-    # initialize the board as a 4x4 matrix filled with -1's to indicate unoccupied tiles
+    # initialize the board as a 4x4 matrix filled with 0's to indicate unoccupied tiles
     def __init__(self):
         self.score = 0
         self.rows = 4
         self.columns = 4
-        self.board = [[-1 for column in range(self.columns)] for row in range(self.rows)]
+        self.board = [[0 for column in range(self.columns)] for row in range(self.rows)]
         self.collision_detector = CollisionDetector(self)
 
     # prints the board to the terminal
@@ -21,7 +21,7 @@ class Board:
             for column in range(self.columns):
                 print('|', end=' ')
 
-                if self.board[row][column] == -1:
+                if self.board[row][column] == 0:
                     print('-', end=' ')
                 else:
                     print(self.board[row][column], end=' ')
@@ -35,20 +35,20 @@ class Board:
     def clear(self):
         for row in range(self.rows):
             for column in range(self.columns):
-                self.board[row][column] = -1
+                self.board[row][column] = 0
 
     # determines if the board is completely filled with tiles
     def is_board_full(self):
         for row in range(self.rows):
             for column in range(self.columns):
-                if self.board[row][column] == -1:
+                if self.board[row][column] == 0:
                     return False
 
         return True
 
     # insert a tile into a position on the board
     def insert_tile(self, row, column, tile):
-        if self.board[row][column] == -1:
+        if self.board[row][column] == 0:
             self.board[row][column] = tile
         else:
             print('tile is occupied')
@@ -79,7 +79,7 @@ class Board:
 
     # checks to see if a tile is occupied at a given position
     def is_tile_occupied(self, row, column):
-        if self.board[row][column] == -1:
+        if self.board[row][column] == 0:
             return False
         else:
             return True
@@ -92,10 +92,10 @@ class Board:
             if self.board[new_row][column] == self.board[row][column] and new_row != row:
                 self.score += 2 * self.board[row][column]
                 self.board[new_row][column] = 2 * self.board[row][column]
-                self.board[row][column] = -1
+                self.board[row][column] = 0
             elif new_row != row:
                 self.board[new_row][column] = self.board[row][column]
-                self.board[row][column] = -1
+                self.board[row][column] = 0
 
         if direction == 'down':
             new_row = self.collision_detector.detect_down_collision(row, column)
@@ -103,10 +103,10 @@ class Board:
             if self.board[new_row][column] == self.board[row][column] and new_row != row:
                 self.score += 2 * self.board[row][column]
                 self.board[new_row][column] = 2 * self.board[row][column]
-                self.board[row][column] = -1
+                self.board[row][column] = 0
             elif new_row != row:
                 self.board[new_row][column] = self.board[row][column]
-                self.board[row][column] = -1
+                self.board[row][column] = 0
 
         if direction == 'left':
             new_column = self.collision_detector.detect_left_collision(row, column)
@@ -114,10 +114,10 @@ class Board:
             if self.board[row][new_column] == self.board[row][column] and new_column != column:
                 self.score += 2 * self.board[row][column]
                 self.board[row][new_column] = 2 * self.board[row][column]
-                self.board[row][column] = -1
+                self.board[row][column] = 0
             elif new_column != column:
                 self.board[row][new_column] = self.board[row][column]
-                self.board[row][column] = -1
+                self.board[row][column] = 0
 
         if direction == 'right':
             new_column = self.collision_detector.detect_right_collision(row, column)
@@ -125,10 +125,10 @@ class Board:
             if self.board[row][new_column] == self.board[row][column] and new_column != column:
                 self.score += 2 * self.board[row][column]
                 self.board[row][new_column] = 2 * self.board[row][column]
-                self.board[row][column] = -1
+                self.board[row][column] = 0
             elif new_column != column:
                 self.board[row][new_column] = self.board[row][column]
-                self.board[row][column] = -1
+                self.board[row][column] = 0
 
     # moves the tiles of the board in a given direction with the correct collision logic
     def move(self, direction):
@@ -188,3 +188,16 @@ class Board:
             for column in range(self.columns):
                 tile = int(input(''))
                 self.board[row][column] = tile
+
+    # returns a list of the empty tiles
+    def empty_tiles(self):
+        tiles = []
+        for row in range(self.rows):
+            for column in range(self.columns):
+                if self.board[row][column] == 0:
+                    tiles.append((row, column))
+
+        return tiles
+
+    def clone(self):
+        return deepcopy(self)

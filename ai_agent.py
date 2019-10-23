@@ -3,41 +3,55 @@ from copy import deepcopy
 
 class AIAgent:
 
-    def __init__(self, board):
-        self.board = board
+    def __init__(self):
+        # the weights matrix
+        self.weights = [
+            [6, 5, 4, 3],
+            [5, 4, 3, 2],
+            [4, 3, 2, 1],
+            [3, 2, 1, 0]
+        ]
 
-    # def find_next_best_move(self):
-    #     score_averages = []
-    #     for direction in ['up', 'down', 'left', 'right']:
-    #         score_sum = 0
-    #         for i in range(5):
-    #             board_copy = deepcopy(self.board)
-    #             board_copy.move(direction)
-    #             while not end_game(board_copy):
-    #                 direction = generate_move(board_copy)
-    #
-    #                 if valid_move(board_copy, direction):
-    #                     board_copy.move(direction)
-    #                     board_copy.insert_random_tile()
-    #
-    #             score_sum += board_copy.score
-    #
-    #         score_average = score_sum / 5
-    #         score_averages.append(score_average)
-    #
-    #     print('up: ' + str(score_averages[0]))
-    #     print('down: ' + str(score_averages[1]))
-    #     print('left: ' + str(score_averages[2]))
-    #     print('right: ' + str(score_averages[3]))
-    #
-    #     max_score = max(score_averages)
-    #     if max_score == score_averages[0]:
-    #         return 'up'
-    #     elif max_score == score_averages[1]:
-    #         return 'down'
-    #     elif max_score == score_averages[2]:
-    #         return 'left'
-    #     elif max_score == score_averages[3]:
-    #         return 'right'
+    def best_move(self, board, depth, is_player):
+        # if max depth has been reached, evaluate board state and return score
+        if depth == 0:
+            return self.evaluate(board)
+        # else the max depth has not been reached and it is the board's turn to randomly place a tile
+        elif not is_player:
+            score = 0
 
+            for tile in board.empty_tiles():
+                board_clone = deepcopy(board)
+                board_clone.insert_tile(tile[0], tile[1], 2)
+                score += 0.9 * self.best_move(board_clone, depth - 1, True)
 
+                board_clone = deepcopy(board)
+                board_clone.insert_tile(tile[0], tile[1], 4)
+                score += 0.1 * self.best_move(board_clone, depth - 1, True)
+
+            return score / (len(board.empty_tiles()) + 1)
+        # else the max depth has not been reached and it is the player's turn to place a tile
+        elif is_player:
+            score = 0
+
+            for direction in ['up', 'down', 'left', 'right']:
+                board_clone = deepcopy(board)
+
+                if board_clone.valid_move(direction):
+                    board_clone.move(direction)
+                    score = max(score, self.best_move(board_clone, depth - 1, False))
+
+            return score
+
+    # weight heuristic function - greater scores for high value tiles clustered in the upper left hand corner
+    def weight_heuristic(self, board):
+        score = 0
+        for row in range(4):
+            for column in range(4):
+                score += self.weights[row][column] * board.board[row][column]
+
+        return score
+
+    # for now return the weight heuristic evaluation, will create penalty for poorly clustered tiles
+    def evaluate(self, board):
+        return self.weight_heuristic(board)
