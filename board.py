@@ -12,6 +12,12 @@ class Board:
         self.score = 0
         self.rows = 4
         self.columns = 4
+
+        self.empty_tiles = []
+        for row in range(self.rows):
+            for column in range(self.columns):
+                self.empty_tiles.append((row, column))
+
         self.board = [[0 for column in range(self.columns)] for row in range(self.rows)]
         self.collision_detector = CollisionDetector(self)
 
@@ -36,38 +42,33 @@ class Board:
         for row in range(self.rows):
             for column in range(self.columns):
                 self.board[row][column] = 0
+                self.empty_tiles.append((row, column))
 
     # determines if the board is completely filled with tiles
     def is_board_full(self):
-        for row in range(self.rows):
-            for column in range(self.columns):
-                if self.board[row][column] == 0:
-                    return False
-
-        return True
+        if len(self.empty_tiles) == 0:
+            return True
+        else:
+            return False
 
     # insert a tile into a position on the board
     def insert_tile(self, row, column, tile):
-        if self.board[row][column] == 0:
+        if not self.is_tile_occupied(row, column):
             self.board[row][column] = tile
+            self.empty_tiles.remove((row, column))
         else:
             print('tile is occupied')
 
     # insert a random 2 tile or a 4 tile on any unoccupied tile of the boardS
     def insert_random_tile(self):
         if not self.is_board_full():
-            while True:
-                row = random.randint(0, self.rows - 1)
-                column = random.randint(0, self.columns - 1)
-
-                if not self.is_tile_occupied(row, column):
-                    break
+            tile = self.empty_tiles[random.randint(0, len(self.empty_tiles) - 1)]
 
             # 90% chance of inserting a 2 tile, 10% chance of inserting a 4 tile
             if random.random() < 0.9:
-                self.board[row][column] = 2
+                self.insert_tile(tile[0], tile[1], 2)
             else:
-                self.board[row][column] = 4
+                self.insert_tile(tile[0], tile[1], 4)
 
     # clears the board and inserts two random tiles
     def new_game(self):
@@ -93,9 +94,12 @@ class Board:
                 self.score += 2 * self.board[row][column]
                 self.board[new_row][column] = 2 * self.board[row][column]
                 self.board[row][column] = 0
+                self.empty_tiles.append((row, column))
             elif new_row != row:
                 self.board[new_row][column] = self.board[row][column]
                 self.board[row][column] = 0
+                self.empty_tiles.append((row, column))
+                self.empty_tiles.remove((new_row, column))
 
         if direction == 'down':
             new_row = self.collision_detector.detect_down_collision(row, column)
@@ -104,9 +108,12 @@ class Board:
                 self.score += 2 * self.board[row][column]
                 self.board[new_row][column] = 2 * self.board[row][column]
                 self.board[row][column] = 0
+                self.empty_tiles.append((row, column))
             elif new_row != row:
                 self.board[new_row][column] = self.board[row][column]
                 self.board[row][column] = 0
+                self.empty_tiles.append((row, column))
+                self.empty_tiles.remove((new_row, column))
 
         if direction == 'left':
             new_column = self.collision_detector.detect_left_collision(row, column)
@@ -115,9 +122,12 @@ class Board:
                 self.score += 2 * self.board[row][column]
                 self.board[row][new_column] = 2 * self.board[row][column]
                 self.board[row][column] = 0
+                self.empty_tiles.append((row, column))
             elif new_column != column:
                 self.board[row][new_column] = self.board[row][column]
                 self.board[row][column] = 0
+                self.empty_tiles.append((row, column))
+                self.empty_tiles.remove((row, new_column))
 
         if direction == 'right':
             new_column = self.collision_detector.detect_right_collision(row, column)
@@ -126,9 +136,12 @@ class Board:
                 self.score += 2 * self.board[row][column]
                 self.board[row][new_column] = 2 * self.board[row][column]
                 self.board[row][column] = 0
+                self.empty_tiles.append((row, column))
             elif new_column != column:
                 self.board[row][new_column] = self.board[row][column]
                 self.board[row][column] = 0
+                self.empty_tiles.append((row, column))
+                self.empty_tiles.remove((row, new_column))
 
     # moves the tiles of the board in a given direction with the correct collision logic
     def move(self, direction):
@@ -188,16 +201,6 @@ class Board:
             for column in range(self.columns):
                 tile = int(input(''))
                 self.board[row][column] = tile
-
-    # returns a list of the empty tiles
-    def empty_tiles(self):
-        tiles = []
-        for row in range(self.rows):
-            for column in range(self.columns):
-                if self.board[row][column] == 0:
-                    tiles.append((row, column))
-
-        return tiles
 
     def clone(self):
         return deepcopy(self)

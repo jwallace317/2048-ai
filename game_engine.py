@@ -21,7 +21,7 @@ def game():
         for direction in ['up', 'down', 'left', 'right']:
             board_clone = deepcopy(board)
             board_clone.move(direction)
-            score = ai_agent.best_move(board_clone, 3, False)
+            score = ai_agent.best_move(board_clone, 4, False)
 
             if score > max_score and board.valid_move(direction):
                 best_move = direction
@@ -31,11 +31,8 @@ def game():
 
         direction = best_move
 
-        if board.valid_move(direction):
-            board.move(direction)
-            board.insert_random_tile()
-        else:
-            print('invalid move')
+        board.move(direction)
+        board.insert_random_tile()
 
 
 if __name__ == '__main__':
